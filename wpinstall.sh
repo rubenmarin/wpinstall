@@ -3,28 +3,43 @@
 CURRENT_PATH=$(pwd)
 WPZIPFILE="latest.zip"
 WPLOAD="wp-load.php"
+
+if [ "$1" = "-v" ];
+	then
+	if [ -z "$2" ];
+		then
+		WPZIPFILE="latest.zip"
+	else
+		WPZIPFILE="wordpress-"$2".zip"
+		echo "installing version: "$2
+	fi
+fi
+
 WPZIP=${CURRENT_PATH}"/"${WPZIPFILE}
+
 WPCHECK=${CURRENT_PATH}"/"${WPLOAD}
 
-
-
 # check if WordPress is installed
-if [ -f "$WPCHECK" ]
+if [ -f "$WPCHECK" ];
 then
-
-	echo 'WordPress is already installed'
-
+	if [ "$1" = "wpconfig" ];
+		then
+		echo ""
+	else
+		echo 'WordPress is already installed'
+	fi
+	
 else
 
 	echo 'installing WordPress...'
 
-	rm 'latest.zip'
+	rm $WPZIP
 
 	#get latest
-	curl -O 'https://wordpress.org/latest.zip'
+	curl -O "https://wordpress.org/"$WPZIPFILE
 
 	#unzip
-	unzip 'latest.zip' 
+	unzip $WPZIP
 
 	#move
 	mv wordpress wp_temp
@@ -38,11 +53,11 @@ else
  	cd ../
 
 	#remove temp
-	if [ -f "$WPCHECK" ]
+	if [ -f "$WPCHECK" ];
 	then
 		echo 'removing temp files...'
 			rmdir ${CURRENT_PATH}"/wp_temp"
-			rm ${CURRENT_PATH}"/latest.zip"
+			rm $WPZIP
 	fi
 
 	## create config
@@ -74,8 +89,14 @@ else
 
 	chmod -R 775 ${CURRENT_PATH}"/wp-content/uploads/"
 	echo 'upload path permissions: done'
+	
+	echo "-----------------------------"
+		#echo "running the following command to update wp-config.php:"
+		echo "running 'sh wpinstall.sh wpconfig' to update 'wp-config.php'"
 
-	echo 'Please Update wp-config.php :)'
+	echo "-----------------------------"
+	
+	sh wpinstall.sh wpconfig
 
 fi
 
@@ -106,7 +127,7 @@ if [ "$1" = "wpconfig" ];
 
 		if [ -z "$DATABASE_NAME" -o -z "$DATABASE_USER" -o -z "$DATABASE_PW" ];
 			then
-			echo 'try again.'
+			echo 'try again >> sh wpinstall.sh wpconfig'
 		else
 			
 			echo "-----------------------------"
@@ -132,7 +153,7 @@ if [ "$1" = "wpconfig" ];
 
 				echo 'done :)'
 			else
-				echo 'try agian.'
+				echo 'try again >> sh wpinstall.sh wpconfig'
 			fi
 		fi
 	fi
