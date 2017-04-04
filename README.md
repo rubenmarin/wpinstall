@@ -1,6 +1,6 @@
 # wpinstall
 
-**Before Anything:** add ``wpinstall.sh`` to path where wordpress is going
+**Before Anything:** add ``wpinstall.sh`` to path where wordpress is going & always name ``wpinstall.sh``
 
 ## Usage
 **NOTE:** ``sh wpinstall.sh wpconfig`` will run after each installation
